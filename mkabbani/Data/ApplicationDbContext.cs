@@ -12,5 +12,7 @@ namespace mkabbani.Data
             : base(options)
         {
         }
+        public DbSet<mkabbani.Data.Customers> Customers { get; set; }
+        
     }
 }
