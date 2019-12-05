@@ -80,7 +80,14 @@ namespace mkabbani.Controllers
         public async Task<ActionResult<Customers>> PostCustomers(Customers customers)
         {
             _context.Customers.Add(customers);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var result = await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
 
             return CreatedAtAction("GetCustomers", new { id = customers.ID }, customers);
         }
