@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
-
+@inject HttpClient client
 @using mkabbani.Data
+@using Microsoft.AspNetCore.Html
 <h1>Weather forecast</h1>
 
 <p>This component demonstrates fetching data from a service.</p>
@@ -13,6 +14,8 @@
     <button type="button" @onclick="AddCustomer">Add</button>
     <br/>
 }
+@*@((MarkupString)message)*@
+<ModalMessage ShowAlert="ShowMessage" MessageText="MessageText" MessageTitle="MessageTitle"/>
 @if (CustomerList == null)
 {
     <p><em>Loading...</em></p>
@@ -49,24 +52,30 @@ else
 @code {
     public List<Customers> CustomerList { get; set; }
     public Customers customer { get; set; }
+    //public string message { get; set; }
+    bool ShowMessage = false;
+    string MessageText = "message";
+    string MessageTitle = "Title";
 
     protected override async Task OnInitializedAsync()
     {
         customer = new Customers { Address = new Address() };
         CustomerList = new List<Customers>();
         await FillData();
+
     }
     async Task FillData()
     {
-        var response = await new HttpClient().GetAsync("https://localhost:44373/api/customers");
+        var response = await client.GetAsync("https://localhost:44373/api/customers");
         CustomerList = await response.Content.ReadAsAsync<List<Customers>>();
     }
     async void AddCustomer()
     {
-        var response = await new HttpClient().PostAsJsonAsync("https://localhost:44373/api/customers", customer);
+        var response = await client.PostAsJsonAsync("https://localhost:44373/api/customers", customer);
         if(response.StatusCode == System.Net.HttpStatusCode.Created)
         {
             await FillData();
+            ShowMessage = !ShowMessage;
             StateHasChanged();
             //show sucss message
         }
@@ -75,4 +84,12 @@ else
             //shwo error message
         }
     }
+    //async void ShowMessage()
+    //{
+    //    message = ;
+    //    StateHasChanged();
+    //    await Task.Delay(3000);
+    //    message = string.Empty;
+    //    StateHasChanged();
+    //}
 }
