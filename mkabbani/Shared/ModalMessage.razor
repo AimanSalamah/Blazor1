@@ -1,15 +1,15 @@
-﻿<div class="modal" style="display:@Display">
+﻿<div class="modal" style="display:@Model.Display">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title">@MessageTitle</h1>
-                <button type="button" class="close" @onclick="Close">×</button>
+                <h1 class="modal-title">@Model.MessageTitle</h1>
+                <button type="button" class="close" @onclick="Model.Hide">×</button>
             </div>
             <div class="modal-body">
-                <p>@MessageText</p>
+                <p>@Model.MessageText</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" @onclick="Close">Close</button>
+                <button type="button" class="btn btn-danger" @onclick="Model.Hide">Close</button>
             </div>
 
         </div>
@@ -17,26 +17,6 @@
 </div>
 
 @code {
-    string Display = "none";
     [Parameter]
-    public string MessageText { get; set; }
-    [Parameter]
-    public string MessageTitle { get; set; }
-    private bool _ShowAlert;
-    [Parameter]
-    public bool ShowAlert
-    {
-        get { return _ShowAlert; }
-        set
-        {
-            
-            _ShowAlert = value;
-            if (value) Display = "block"; else Display = "none";
-        }
-    }
-
-    void Close()
-    {
-        ShowAlert = false;
-    }
+    public Data.ModalMessage Model { get; set; }
 }

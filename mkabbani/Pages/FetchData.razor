@@ -14,8 +14,7 @@
     <button type="button" @onclick="AddCustomer">Add</button>
     <br/>
 }
-@*@((MarkupString)message)*@
-<ModalMessage ShowAlert="ShowMessage" MessageText="MessageText" MessageTitle="MessageTitle"/>
+<ModalMessage Model="MessageModel"/>
 @if (CustomerList == null)
 {
     <p><em>Loading...</em></p>
@@ -48,21 +47,17 @@ else
         </tbody>
     </table>
 }
-
 @code {
     public List<Customers> CustomerList { get; set; }
     public Customers customer { get; set; }
-    //public string message { get; set; }
-    bool ShowMessage = false;
-    string MessageText = "message";
-    string MessageTitle = "Title";
+    public Data.ModalMessage MessageModel { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        MessageModel = new Data.ModalMessage();
         customer = new Customers { Address = new Address() };
         CustomerList = new List<Customers>();
         await FillData();
-
     }
     async Task FillData()
     {
@@ -75,7 +70,7 @@ else
         if(response.StatusCode == System.Net.HttpStatusCode.Created)
         {
             await FillData();
-            ShowMessage = !ShowMessage;
+            MessageModel.Show("Hello there :)", "This is title");
             StateHasChanged();
             //show sucss message
         }
@@ -84,12 +79,4 @@ else
             //shwo error message
         }
     }
-    //async void ShowMessage()
-    //{
-    //    message = ;
-    //    StateHasChanged();
-    //    await Task.Delay(3000);
-    //    message = string.Empty;
-    //    StateHasChanged();
-    //}
 }
