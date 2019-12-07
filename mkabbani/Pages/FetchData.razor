@@ -8,9 +8,8 @@
 @if(customer!=null)
 {
     <input type="text" @bind="customer.Name" />
-    @*<input type="text" @bind="customer.Address.FullName" />
+    <input type="text" @bind="customer.Address.FullName" />
     <input type="text" @bind="customer.Address.Email" />
-    <input type="text" @bind="customer.Address.Address" />*@
     <button type="button" @onclick="AddCustomer">Add</button>
     <br/>
 }
