@@ -8,31 +8,6 @@ namespace mkabbani.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Address",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreateDate = table.Column<DateTime>(nullable: false),
-                    UpdateDate = table.Column<DateTime>(nullable: false),
-                    AddressID = table.Column<int>(nullable: false),
-                    AddressID1 = table.Column<int>(nullable: true),
-                    FullName = table.Column<string>(nullable: true),
-                    UserName = table.Column<string>(nullable: true),
-                    Email = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Address", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Address_Address_AddressID1",
-                        column: x => x.AddressID1,
-                        principalTable: "Address",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
                 {
@@ -64,33 +39,12 @@ namespace mkabbani.Migrations
                     TwoFactorEnabled = table.Column<bool>(nullable: false),
                     LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
                     LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false)
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customers",
-                columns: table => new
-                {
-                    ID = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    CreateDate = table.Column<DateTime>(nullable: false),
-                    UpdateDate = table.Column<DateTime>(nullable: false),
-                    AddressID = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customers", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Customers_Address_AddressID",
-                        column: x => x.AddressID,
-                        principalTable: "Address",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -112,6 +66,38 @@ namespace mkabbani.Migrations
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Address",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    UpdateDate = table.Column<DateTime>(nullable: false),
+                    AddressID = table.Column<int>(nullable: false),
+                    AddressID1 = table.Column<int>(nullable: true),
+                    UserID = table.Column<string>(nullable: true),
+                    FullName = table.Column<string>(nullable: true),
+                    UserName = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Address", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Address_Address_AddressID1",
+                        column: x => x.AddressID1,
+                        principalTable: "Address",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Address_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -199,10 +185,44 @@ namespace mkabbani.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Customers",
+                columns: table => new
+                {
+                    ID = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    UpdateDate = table.Column<DateTime>(nullable: false),
+                    AddressID = table.Column<int>(nullable: false),
+                    UserID = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_Customers_Address_AddressID",
+                        column: x => x.AddressID,
+                        principalTable: "Address",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Customers_AspNetUsers_UserID",
+                        column: x => x.UserID,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Address_AddressID1",
                 table: "Address",
                 column: "AddressID1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Address_UserID",
+                table: "Address",
+                column: "UserID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -247,6 +267,11 @@ namespace mkabbani.Migrations
                 name: "IX_Customers_AddressID",
                 table: "Customers",
                 column: "AddressID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Customers_UserID",
+                table: "Customers",
+                column: "UserID");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -273,10 +298,10 @@ namespace mkabbani.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Address");
 
             migrationBuilder.DropTable(
-                name: "Address");
+                name: "AspNetUsers");
         }
     }
 }

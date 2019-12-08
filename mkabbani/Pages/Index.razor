@@ -3,3 +3,12 @@
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+<AuthorizeView>
+    <Authorized>
+        <h1>Hello, @context.User.Identity.Name!</h1>
+        You can only see this if you're authenticated.
+    </Authorized>
+    <NotAuthorized>
+        You're not logged in.
+    </NotAuthorized>
+</AuthorizeView>

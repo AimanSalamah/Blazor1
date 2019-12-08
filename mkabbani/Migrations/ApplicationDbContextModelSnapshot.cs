@@ -82,6 +82,10 @@ namespace mkabbani.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(256)")
                         .HasMaxLength(256);
@@ -133,6 +137,8 @@ namespace mkabbani.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -244,12 +250,17 @@ namespace mkabbani.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("UserName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 
                     b.HasIndex("AddressID1");
+
+                    b.HasIndex("UserID");
 
                     b.ToTable("Address");
                 });
@@ -273,11 +284,23 @@ namespace mkabbani.Migrations
                     b.Property<DateTime>("UpdateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("UserID")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ID");
 
                     b.HasIndex("AddressID");
 
+                    b.HasIndex("UserID");
+
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("mkabbani.Data.AppUser", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.HasDiscriminator().HasValue("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -336,6 +359,10 @@ namespace mkabbani.Migrations
                     b.HasOne("mkabbani.Data.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressID1");
+
+                    b.HasOne("mkabbani.Data.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
                 });
 
             modelBuilder.Entity("mkabbani.Data.Customers", b =>
@@ -345,6 +372,10 @@ namespace mkabbani.Migrations
                         .HasForeignKey("AddressID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("mkabbani.Data.AppUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserID");
                 });
 #pragma warning restore 612, 618
         }

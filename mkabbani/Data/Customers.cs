@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace mkabbani.Data
     public class Customers : BaseTable
     {
         public string Name { get; set; }
+
     }
 
     public interface IBaseTable
@@ -25,11 +27,17 @@ namespace mkabbani.Data
         public DateTime UpdateDate { get; set; }
         public int AddressID { get; set; }
         public virtual Address Address { get; set; }
+        public string UserID { get; set; }
+        public virtual AppUser User { get; set; }
     }
     public class Address : BaseTable
     {
         public string FullName { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
+    }
+    public class AppUser : IdentityUser
+    {
+
     }
 }
