@@ -1,5 +1,40 @@
-﻿<h3>SignIn</h3>
+﻿@page "/login"
+@using Microsoft.AspNetCore.Http
+@inject HttpContext context
+@inject HttpClient client
+<div class="container">
+<h3>SignIn</h3>
+<div class="form-group">
+    <label for="email">Email</label>
+    <input type="text" name="email" placeholder="Email" @bind="@Email" class="form-group" />
+</div>
+<div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" name="password" placeholder="Password" @bind="@Password" class="form-group" />
+</div>
+<button @onclick="Submit" class="btn btn-primary">Submit</button>
+</div>
 
 @code {
+    public string Email { get; set; }
+    public string Password { get; set; }
+    public string Token { get; set; }
+    class Login
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+    }
+    async Task Submit()
+    {
+        var vm = new Login
+        {
+            Email = Email,
+            Password = Password
+        };
+        var response = await client.PostAsJsonAsync<object>("http://localhost:62523/api/account/Login", vm);
+        Token = await response.Content.ReadAsStringAsync();
+
+         //context.Session.SetString("AccsesToken", Token);
+     }
 
 }
