@@ -22,6 +22,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace mkabbani
 {
@@ -82,7 +83,6 @@ namespace mkabbani
                 options.User.RequireUniqueEmail = true;
             });
             services.AddDistributedMemoryCache();
-
             services.AddSession(options =>
             {
                 options.Cookie.Name = ".AdventureWorks.Session";
@@ -94,6 +94,8 @@ namespace mkabbani
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
             services.AddSingleton<HttpClient>();
+            services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddSession();
         }
 
