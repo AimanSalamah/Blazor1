@@ -23,6 +23,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace mkabbani
 {
@@ -85,18 +86,33 @@ namespace mkabbani
             services.AddDistributedMemoryCache();
             services.AddSession(options =>
             {
-                options.Cookie.Name = ".AdventureWorks.Session";
+                options.Cookie.Name = ".Kabbani.Session";
+                options.Cookie.HttpOnly = true;
                 options.IdleTimeout = TimeSpan.FromSeconds(10);
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.IsEssential = true;
             });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.Name = ".Kabbani.Cookie";
+                options.Cookie.HttpOnly = true;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+                options.LoginPath = "/Login";
+                // ReturnUrlParameter requires 
+                //using Microsoft.AspNetCore.Authentication.Cookies;
+                options.ReturnUrlParameter = CookieAuthenticationDefaults.ReturnUrlParameter;
+                options.SlidingExpiration = true;
+            });
+
+            services.AddSession();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AppUser>>();
             services.AddSingleton<HttpClient>();
             services.AddSingleton<ITempDataProvider, CookieTempDataProvider>();
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddSession();
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -122,6 +138,7 @@ namespace mkabbani
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSession();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

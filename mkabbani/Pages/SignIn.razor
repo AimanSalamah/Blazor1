@@ -1,6 +1,6 @@
 ﻿@page "/login"
 @using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor HttpContextAccessor
+@inject IHttpContextAccessor httpContextAccessor
 @inject HttpClient client
 <div class="container">
     <h3>SignIn</h3>
@@ -24,6 +24,10 @@
         public string Email { get; set; }
         public string Password { get; set; }
     }
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+    }
     async Task Submit()
     {
         var vm = new Login
@@ -33,8 +37,7 @@
         };
         var response = await client.PostAsJsonAsync<object>("http://localhost:62523/api/account/Login", vm);
         Token = await response.Content.ReadAsStringAsync();
-
-        HttpContextAccessor.HttpContext.Session.SetString("AccsesToken", Token);
+        httpContextAccessor.HttpContext.Session.SetString("token", Token);
     }
 
 }
